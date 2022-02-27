@@ -5,6 +5,7 @@ import { useState } from 'react';
 import './App.css';
 import { GlobalStyle } from './GlobalStyle';
 import Header from './components/Header';
+import Home from './components/Home';
 
 
 
@@ -14,6 +15,7 @@ const App = () => {
     <div className="App">
       <Header></Header>
       Start Here
+      <Home></Home>
       <GlobalStyle/>
     </div>
   );
