@@ -14,7 +14,6 @@ const App = () => {
   return (
     <div className="App">
       <Header></Header>
-      Start Here
       <Home></Home>
       <GlobalStyle/>
     </div>

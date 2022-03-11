@@ -1,48 +1,49 @@
-import React, { useEffect } from "react";
-import { useState } from 'react';
+import React from 'react';
 //config
-import { POSTER_SIZE, BACKDROP_SIZE, IMAGE_BASE_URL } from '../config';
+import { BACKDROP_SIZE, IMAGE_BASE_URL, POSTER_SIZE } from '../config';
 //components
-
-//API
-import API from "../API";
+import HeroImage from './HeroImage';
+import Grid from './Grid';
+import Thumb from './Thumb';
+import Spinner from './Spinner';
 //hook
+import { useHomeFetch } from "../hooks/useHomeFetch";
 //read about hooks in reactjs docs
 
 //images
 import NoImage from '../images/no_image.jpeg';
+import SearchBar from './SearchBar';
 
 const Home = (/*For Props*/) =>{
-    const [state, setState] = useState();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
-
-    const fetchMovies = async (page, searchTerm="Some") => {
-        try{
-            setError(false);
-            setLoading(true);
-            const movies = await API.fetchMovies(searchTerm, page);
-            console.log(movies);
-            setState(prev => ({
-                ...movies, 
-                results:
-                    page > 1 ? [...prev.results, ...movies.results] :
-                    [...movies.results]
-            }));
-        }catch(error) {
-            setError(true);
-        }
-        setLoading(false);
-    };
-    // Initial render fetch all movies page 1
-    useEffect(() => {
-        fetchMovies(1)
-    }, []);
+    const {state, laoding, error, setSearchTerm} = useHomeFetch();
     console.log(state);
     return(
-        <div className="Home">
-            HomePage
-        </div>
+        <>
+            {state.results[0] ? (
+                <HeroImage 
+                image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${state.results[0].backdrop_path}`}
+                title={state.results[0].title}
+                text={state.results[0].overview}/> ): 
+                null
+            }
+            <SearchBar setSearchTerm={setSearchTerm}/>
+            <Grid header='Popular Movies'>
+            {state.results.map(movie => (
+                <Thumb
+                key={movie.id}
+                clickable
+                image={
+                    movie.poster_path?
+                    IMAGE_BASE_URL + POSTER_SIZE + movie.poster_path: NoImage
+
+                }
+                movieId={movie.id}/
+                >
+                
+            ))}
+            </Grid>
+            <Spinner/>
+        </>
     );
 }
 
